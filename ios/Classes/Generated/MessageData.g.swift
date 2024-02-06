@@ -51,26 +51,96 @@ enum PlayerState: Int {
   case ended = 4
   case error = 5
 }
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct CreateResponse {
+  var id: String
+
+  static func fromList(_ list: [Any?]) -> CreateResponse? {
+    let id = list[0] as! String
+
+    return CreateResponse(
+      id: id
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      id
+    ]
+  }
+}
+private class IvsPlayerRequesterToNativeCodecReader: FlutterStandardReader {
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+    case 128:
+      return CreateResponse.fromList(self.readValue() as! [Any?])
+    default:
+      return super.readValue(ofType: type)
+    }
+  }
+}
+
+private class IvsPlayerRequesterToNativeCodecWriter: FlutterStandardWriter {
+  override func writeValue(_ value: Any) {
+    if let value = value as? CreateResponse {
+      super.writeByte(128)
+      super.writeValue(value.toList())
+    } else {
+      super.writeValue(value)
+    }
+  }
+}
+
+private class IvsPlayerRequesterToNativeCodecReaderWriter: FlutterStandardReaderWriter {
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return IvsPlayerRequesterToNativeCodecReader(data: data)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return IvsPlayerRequesterToNativeCodecWriter(data: data)
+  }
+}
+
+class IvsPlayerRequesterToNativeCodec: FlutterStandardMessageCodec {
+  static let shared = IvsPlayerRequesterToNativeCodec(readerWriter: IvsPlayerRequesterToNativeCodecReaderWriter())
+}
+
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol IvsPlayerRequesterToNative {
-  func load(urlString: String) throws
-  func play() throws
-  func pause() throws
-  func clean() throws
+  func create() throws -> CreateResponse
+  func load(id: String, urlString: String) throws
+  func play(id: String) throws
+  func pause(id: String) throws
+  func clean(id: String) throws
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class IvsPlayerRequesterToNativeSetup {
   /// The codec used by IvsPlayerRequesterToNative.
+  static var codec: FlutterStandardMessageCodec { IvsPlayerRequesterToNativeCodec.shared }
   /// Sets up an instance of `IvsPlayerRequesterToNative` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: IvsPlayerRequesterToNative?) {
-    let loadChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.load", binaryMessenger: binaryMessenger)
+    let createChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.create", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      createChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.create()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      createChannel.setMessageHandler(nil)
+    }
+    let loadChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.load", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       loadChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let urlStringArg = args[0] as! String
+        let idArg = args[0] as! String
+        let urlStringArg = args[1] as! String
         do {
-          try api.load(urlString: urlStringArg)
+          try api.load(id: idArg, urlString: urlStringArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -79,11 +149,13 @@ class IvsPlayerRequesterToNativeSetup {
     } else {
       loadChannel.setMessageHandler(nil)
     }
-    let playChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.play", binaryMessenger: binaryMessenger)
+    let playChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.play", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      playChannel.setMessageHandler { _, reply in
+      playChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let idArg = args[0] as! String
         do {
-          try api.play()
+          try api.play(id: idArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -92,11 +164,13 @@ class IvsPlayerRequesterToNativeSetup {
     } else {
       playChannel.setMessageHandler(nil)
     }
-    let pauseChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.pause", binaryMessenger: binaryMessenger)
+    let pauseChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.pause", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      pauseChannel.setMessageHandler { _, reply in
+      pauseChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let idArg = args[0] as! String
         do {
-          try api.pause()
+          try api.pause(id: idArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -105,11 +179,13 @@ class IvsPlayerRequesterToNativeSetup {
     } else {
       pauseChannel.setMessageHandler(nil)
     }
-    let cleanChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.clean", binaryMessenger: binaryMessenger)
+    let cleanChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.clean", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      cleanChannel.setMessageHandler { _, reply in
+      cleanChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let idArg = args[0] as! String
         do {
-          try api.clean()
+          try api.clean(id: idArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -122,18 +198,18 @@ class IvsPlayerRequesterToNativeSetup {
 }
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol IvsPlayerRequesterToFlutterProtocol {
-  func didChangeState(state stateArg: PlayerState, completion: @escaping (Result<Void, FlutterError>) -> Void)
-  func didChangeDuration(duration durationArg: Double, completion: @escaping (Result<Void, FlutterError>) -> Void)
+  func didChangeState(id idArg: String, state stateArg: PlayerState, completion: @escaping (Result<Void, FlutterError>) -> Void)
+  func didChangeDuration(id idArg: String, duration durationArg: Double, completion: @escaping (Result<Void, FlutterError>) -> Void)
 }
 class IvsPlayerRequesterToFlutter: IvsPlayerRequesterToFlutterProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
   init(binaryMessenger: FlutterBinaryMessenger) {
     self.binaryMessenger = binaryMessenger
   }
-  func didChangeState(state stateArg: PlayerState, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+  func didChangeState(id idArg: String, state stateArg: PlayerState, completion: @escaping (Result<Void, FlutterError>) -> Void) {
     let channelName: String = "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToFlutter.didChangeState"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger)
-    channel.sendMessage([stateArg.rawValue] as [Any?]) { response in
+    channel.sendMessage([idArg, stateArg.rawValue] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -148,10 +224,10 @@ class IvsPlayerRequesterToFlutter: IvsPlayerRequesterToFlutterProtocol {
       }
     }
   }
-  func didChangeDuration(duration durationArg: Double, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+  func didChangeDuration(id idArg: String, duration durationArg: Double, completion: @escaping (Result<Void, FlutterError>) -> Void) {
     let channelName: String = "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToFlutter.didChangeDuration"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger)
-    channel.sendMessage([durationArg] as [Any?]) { response in
+    channel.sendMessage([idArg, durationArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return

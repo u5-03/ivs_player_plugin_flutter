@@ -70,9 +70,14 @@ class _MyAppState extends State<MyApp> {
               mainAxisSize: MainAxisSize.min,
               children: [
               Expanded(
-                child: Builder(
-                  builder: (context) {
-                    return IvsPlayerWidget(ivsPlayerController: ivsPlayerController);
+                child: FutureBuilder(
+                  future:ivsPlayerController.initialize(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return IvsPlayerWidget(ivsPlayerController: ivsPlayerController);
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
                   }
                 ),
               ),

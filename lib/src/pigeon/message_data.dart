@@ -28,17 +28,23 @@ enum PlayerState {
   error,
 }
 
+class CreateResponse {
+  final String id;
+  CreateResponse({required this.id});
+}
+
 
 @HostApi() // Flutter -> Native
 abstract class IvsPlayerRequesterToNative {
-  void load(String urlString);
-  void play();
-  void pause();
-  void clean();
+  CreateResponse create();
+  void load(String id, String urlString);
+  void play(String id);
+  void pause(String id);
+  void clean(String id);
 }
 
 @FlutterApi() // Native -> Flutter
 abstract class IvsPlayerRequesterToFlutter {
-  void didChangeState(PlayerState state);
-  void didChangeDuration(double duration);
+  void didChangeState(String id, PlayerState state);
+  void didChangeDuration(String id, double duration);
 }

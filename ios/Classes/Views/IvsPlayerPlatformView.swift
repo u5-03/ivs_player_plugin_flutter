@@ -9,20 +9,29 @@ import Foundation
 import Flutter
 import AmazonIVSPlayer
 
-final class IvsPlayerWrapperView: UIView, FlutterPlatformView {
+final class IvsPlayerPlatformView: UIView, FlutterPlatformView {
+    private let id: String
     private let requester: IvsPlayerRequesterToFlutter
     private let ivsPlayerLayer: IVSPlayerLayer
+    private let ivsPlayer: IVSPlayer
+
+//    static func create(viewIdentifier viewId: Int64,
+//
+//                       requester: IvsPlayerRequesterToFlutter,
+//                       ivsPlayer: IVSPlayer) -> IvsPlayerView {
+//        return IvsPlayerPlatformView(viewIdentifier: viewId, arguments: args, requester: requester, ivsPlayer: ivsPlayer)
+//    }
 
     init(
-        frame: CGRect,
-        viewIdentifier viewId: Int64,
-        arguments args: Any?,
+        id: String,
         requester: IvsPlayerRequesterToFlutter,
         ivsPlayer: IVSPlayer
     ) {
+        self.id = id
         self.requester = requester
+        self.ivsPlayer = ivsPlayer
         ivsPlayerLayer = IVSPlayerLayer(player: ivsPlayer)
-        super.init(frame: frame)
+        super.init(frame: .zero)
         ivsPlayer.delegate = self
         // resizeAspectFillを設定すると、映像が流れなくなる
 //        ivsPlayerLayer.videoGravity = .resizeAspectFill
@@ -50,7 +59,7 @@ final class IvsPlayerWrapperView: UIView, FlutterPlatformView {
     }
 }
 
-extension IvsPlayerWrapperView: IVSPlayer.Delegate {
+extension IvsPlayerPlatformView: IVSPlayer.Delegate {
     func player(_ player: IVSPlayer, didChangeState state: IVSPlayer.State) {
         let playerState: PlayerState
         switch state {
@@ -61,14 +70,14 @@ extension IvsPlayerWrapperView: IVSPlayer.Delegate {
         case .ended: playerState = .ended
         @unknown default: playerState = .idle
         }
-        requester.didChangeState(state: playerState, completion: { _ in })
+        requester.didChangeState(id: id, state: playerState, completion: { _ in })
     }
 
     func player(_ player: IVSPlayer, didFailWithError error: Error) {
-        requester.didChangeState(state: .error, completion: { _ in  })
+        requester.didChangeState(id: id, state: .error, completion: { _ in  })
     }
 
     func player(_ player: IVSPlayer, didChangeDuration duration: CMTime) {
-        requester.didChangeDuration(duration: duration.seconds, completion: { _ in })
+        requester.didChangeDuration(id: id, duration: duration.seconds, completion: { _ in })
     }
 }

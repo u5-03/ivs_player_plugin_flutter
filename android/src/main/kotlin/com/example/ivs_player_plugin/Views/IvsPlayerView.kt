@@ -31,7 +31,7 @@ internal class IvsPlayerWrapperView(context: Context, private val requesterToFlu
         playerView = PlayerView(context);
         playerView.controlsEnabled = false;
         playerView.captionsEnabled = false;
-//        playerView.resizeMode = ResizeMode.FILL;
+       playerView.resizeMode = ResizeMode.FILL;
         requesterToNative.setPlayer(playerView.player);
         playerView.player.addListener(object : Player.Listener() {
             override fun onError(p0: PlayerException) {
@@ -57,6 +57,7 @@ internal class IvsPlayerWrapperView(context: Context, private val requesterToFlu
                 requesterToFlutter.didChangeState(playerState) {}
             }
         })
+        print("IvsPlayerView init(kt)");
     }
 
     // MARK: RequesterToFlutter

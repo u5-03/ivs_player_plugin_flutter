@@ -15,18 +15,28 @@ final class IvsPlayerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (Platform.isIOS) {
-      return _iOSWidget();
-    } else if (Platform.isAndroid) {
-      return _androidWidget();
-    } else {
-      return const Text('Unrecognized Platform.');
-    }
+    return ColoredBox(
+      color: Colors.red,
+      child: Builder(
+        builder: (BuildContext context) {
+          if (Platform.isIOS) {
+            return _iOSWidget();
+          } else if (Platform.isAndroid) {
+            return _androidWidget();
+          } else {
+            return const Text('Unrecognized Platform.');
+          }
+        },
+      ),
+    );
   }
 
   Widget _iOSWidget() {
     return UiKitView(
       viewType: PlatformViewKind.ivsPlayerView.rawValue,
+      creationParams: {
+        'id': ivsPlayerController.id,
+      },
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
@@ -49,6 +59,9 @@ final class IvsPlayerWidget extends StatelessWidget {
           id: params.id,
           viewType: PlatformViewKind.ivsPlayerView.rawValue,
           layoutDirection: TextDirection.ltr,
+          creationParams: {
+            'id': ivsPlayerController.id,
+          },
           creationParamsCodec: const StandardMessageCodec(),
         )
           ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)

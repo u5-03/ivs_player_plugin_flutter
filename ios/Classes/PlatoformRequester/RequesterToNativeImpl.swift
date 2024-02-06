@@ -12,29 +12,44 @@ import Flutter
 import AmazonIVSPlayer
 
 final class RequesterToNativeImpl: NSObject {
-    private let player: IVSPlayer
+    private let registrar: FlutterPluginRegistrar
 
-    init(player: IVSPlayer) {
-        self.player = player
+    init(registrar: FlutterPluginRegistrar) {
+        self.registrar = registrar
     }
-
 }
 
 extension RequesterToNativeImpl: IvsPlayerRequesterToNative {
-    func load(urlString: String) throws {
-        player.load(URL(string: urlString))
+    func create() throws -> CreateResponse {
+        let id = UUID().uuidString
+        let ivsPlayer = IVSPlayer()
+        let response = CreateResponse(id: id)
+        let requester = IvsPlayerRequesterToFlutter(binaryMessenger: registrar.messenger())
+        let platformView = IvsPlayerPlatformView(
+            id: id,
+            requester: requester,
+            ivsPlayer: ivsPlayer
+        )
+        IvsPlayerFlutterPlugin.ivsPlayers[id] = ivsPlayer
+        IvsPlayerFlutterPlugin.ivsPlayerViews[id] = platformView
+        return response
     }
     
-    func play() throws {
-        player.play()
+    func load(id: String, urlString: String) throws {
+        IvsPlayerFlutterPlugin.ivsPlayers[id]?.load(URL(string: urlString))
     }
     
-    func pause() throws {
-        player.pause()
+    func play(id: String) throws {
+        IvsPlayerFlutterPlugin.ivsPlayers[id]?.play()
     }
-
-    func clean() throws {
-        player.delegate = nil
+    
+    func pause(id: String) throws {
+        IvsPlayerFlutterPlugin.ivsPlayers[id]?.pause()
+    }
+    
+    func clean(id: String) throws {
+        IvsPlayerFlutterPlugin.ivsPlayers[id]?.delegate = nil
+        IvsPlayerFlutterPlugin.ivsPlayers.removeValue(forKey: id)
+        IvsPlayerFlutterPlugin.ivsPlayerViews.removeValue(forKey: id)
     }
 }
-
