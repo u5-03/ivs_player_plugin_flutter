@@ -15,13 +15,6 @@ final class IvsPlayerPlatformView: UIView, FlutterPlatformView {
     private let ivsPlayerLayer: IVSPlayerLayer
     private let ivsPlayer: IVSPlayer
 
-//    static func create(viewIdentifier viewId: Int64,
-//
-//                       requester: IvsPlayerRequesterToFlutter,
-//                       ivsPlayer: IVSPlayer) -> IvsPlayerView {
-//        return IvsPlayerPlatformView(viewIdentifier: viewId, arguments: args, requester: requester, ivsPlayer: ivsPlayer)
-//    }
-
     init(
         id: String,
         requester: IvsPlayerRequesterToFlutter,

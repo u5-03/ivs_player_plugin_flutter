@@ -105,6 +105,8 @@ private object IvsPlayerRequesterToNativeCodec : StandardMessageCodec() {
 interface IvsPlayerRequesterToNative {
   fun create(): CreateResponse
   fun load(id: String, urlString: String)
+  fun removeExcept(id: String)
+  fun resetAll()
   fun play(id: String)
   fun pause(id: String)
   fun clean(id: String)
@@ -143,6 +145,42 @@ interface IvsPlayerRequesterToNative {
             var wrapped: List<Any?>
             try {
               api.load(idArg, urlStringArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.removeExcept", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val idArg = args[0] as String
+            var wrapped: List<Any?>
+            try {
+              api.removeExcept(idArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.resetAll", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped: List<Any?>
+            try {
+              api.resetAll()
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)

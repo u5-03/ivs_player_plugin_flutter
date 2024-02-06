@@ -21,11 +21,20 @@ class IvsPlayerRequesterToNativeImpl(private val context: Context, private val b
         IvsPlayerFlutterPlugin.ivsPlayers[id] = playerView.player
         IvsPlayerFlutterPlugin.ivsPlayerViews[id] = platformView
         return response
-
     }
+
+    override fun removeExcept(id: String) {
+        IvsPlayerFlutterPlugin.ivsPlayers = IvsPlayerFlutterPlugin.ivsPlayers.filter { it.key == id }.toMutableMap()
+        IvsPlayerFlutterPlugin.ivsPlayerViews = IvsPlayerFlutterPlugin.ivsPlayerViews.filter { it.key == id }.toMutableMap()
+    }
+
+    override fun resetAll() {
+        IvsPlayerFlutterPlugin.ivsPlayers.clear();
+        IvsPlayerFlutterPlugin.ivsPlayerViews.clear();
+    }
+
     override fun load(id: String, urlString: String) {
         IvsPlayerFlutterPlugin.ivsPlayers[id]?.load(Uri.parse(urlString));
-
     }
 
     override fun play(id: String) {
@@ -38,5 +47,7 @@ class IvsPlayerRequesterToNativeImpl(private val context: Context, private val b
 
     override fun clean(id: String) {
         IvsPlayerFlutterPlugin.ivsPlayers[id]?.release();
+        IvsPlayerFlutterPlugin.ivsPlayers.remove(id);
+        IvsPlayerFlutterPlugin.ivsPlayerViews.remove(id);
     }
 }

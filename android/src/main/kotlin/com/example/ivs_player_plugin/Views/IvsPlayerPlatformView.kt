@@ -12,13 +12,14 @@ import com.amazonaws.ivs.player.PlayerException
 import com.amazonaws.ivs.player.PlayerView
 import com.amazonaws.ivs.player.Quality
 import com.amazonaws.ivs.player.ResizeMode
+import com.example.ivs_player_plugin.IvsPlayerFlutterPlugin
 import io.flutter.plugin.platform.PlatformView
 
 class IvsPlayerPlatformView(
     private val id: String,
     private val requesterToFlutter: IvsPlayerRequesterToFlutter,
     private val playerView: PlayerView,
-): PlatformView, IvsPlayerRequesterToNative {
+): PlatformView {
     override fun getView(): View {
         return playerView;
     }
@@ -30,7 +31,7 @@ class IvsPlayerPlatformView(
     init {
         playerView.controlsEnabled = false;
         playerView.captionsEnabled = false;
-       playerView.resizeMode = ResizeMode.FILL;
+        playerView.resizeMode = ResizeMode.FILL;
         playerView.player.addListener(object : Player.Listener() {
             override fun onError(p0: PlayerException) {
                 requesterToFlutter.didChangeState(id, PlayerState.ERROR) {}
@@ -55,26 +56,5 @@ class IvsPlayerPlatformView(
                 requesterToFlutter.didChangeState(id, playerState) {}
             }
         })
-        print("IvsPlayerView init(kt)");
-    }
-
-    // MARK: RequesterToFlutter
-    override fun create(): CreateResponse {
-        TODO("Not yet implemented")
-    }
-    override fun load(id: String, urlString: String) {
-        playerView.player.load(Uri.parse(urlString));
-    }
-
-    override fun play(id: String) {
-        playerView.player.play();
-    }
-
-    override fun pause(id: String) {
-        playerView.player.pause();
-    }
-
-    override fun clean(id: String) {
-        playerView.player.release();
     }
 }

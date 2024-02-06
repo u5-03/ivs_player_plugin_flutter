@@ -15,19 +15,16 @@ final class IvsPlayerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: Colors.red,
-      child: Builder(
-        builder: (BuildContext context) {
-          if (Platform.isIOS) {
-            return _iOSWidget();
-          } else if (Platform.isAndroid) {
-            return _androidWidget();
-          } else {
-            return const Text('Unrecognized Platform.');
-          }
-        },
-      ),
+    return Builder(
+      builder: (BuildContext context) {
+        if (Platform.isIOS) {
+          return _iOSWidget();
+        } else if (Platform.isAndroid) {
+          return _androidWidget();
+        } else {
+          return const Text('Unrecognized Platform.');
+        }
+      },
     );
   }
 

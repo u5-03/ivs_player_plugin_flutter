@@ -36,10 +36,12 @@ class IvsPlayerFlutterPlugin: FlutterPlugin {
     val requesterToNative = IvsPlayerRequesterToNativeImpl(context, flutterPluginBinding.binaryMessenger);
     IvsPlayerRequesterToNative.setUp(flutterPluginBinding.binaryMessenger, requesterToNative);
     flutterPluginBinding.platformViewRegistry
-      .registerViewFactory(PlatformViewKind.IVS_PLAYER.rawValue, IvsPlayerViewFactory(requesterToNative));
+      .registerViewFactory(PlatformViewKind.IVS_PLAYER.rawValue, IvsPlayerViewFactory());
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     IvsPlayerRequesterToNative.setUp(binding.binaryMessenger, null)
+    ivsPlayers.clear();
+    ivsPlayerViews.clear();
   }
 }

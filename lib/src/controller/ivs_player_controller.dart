@@ -8,7 +8,7 @@ final class IvsPlayerController extends ValueNotifier<IvsPlayerState> {
     required this.uri,
     RequesterToFlutterCallbacks? callbacks,
   })  : _callbacks = callbacks,
-        super(IvsPlayerState.empty()) {}
+        super(IvsPlayerState.empty());
   final _requester = IvsPlayerRequesterToNative();
   final RequesterToFlutterCallbacks? _callbacks;
   static const String kUninitializedTextureId = '';
@@ -44,6 +44,14 @@ final class IvsPlayerController extends ValueNotifier<IvsPlayerState> {
     _requester.load(_id, uri.toString());
   }
 
+  removeExcept() {
+    _requester.removeExcept(_id);
+  }
+
+  resetAll() {
+    _requester.resetAll();
+  }
+
   play() {
     _requester.play(_id);
   }
@@ -52,7 +60,7 @@ final class IvsPlayerController extends ValueNotifier<IvsPlayerState> {
     _requester.pause(_id);
   }
 
-  clean() {
+  clean(int index) {
     _requester.clean(_id);
   }
 }

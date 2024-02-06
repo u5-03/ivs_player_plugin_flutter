@@ -17,8 +17,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final _ivsPlayerFlutterPlugin = IvsPlayerFlutter();
-  final ivsPlayerController = IvsPlayerController(uri: Uri.parse('https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.YtnrVcQbttF0.m3u8'));
+  final ivsPlayerController = IvsPlayerController(
+      uri: Uri.parse(
+          'https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.YtnrVcQbttF0.m3u8'));
   // final requesterToFlutter = RequesterToFlutter();
 
   @override
@@ -28,10 +29,12 @@ class _MyAppState extends State<MyApp> {
 
     ivsPlayerController.addListener(() {
       print('Player State: ${ivsPlayerController.value.playerState}');
-      if(ivsPlayerController.value.playerState == PlayerState.ready) {
+      if (ivsPlayerController.value.playerState == PlayerState.ready) {
         ivsPlayerController.play();
       }
     });
+
+    ivsPlayerController.resetAll();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -40,9 +43,8 @@ class _MyAppState extends State<MyApp> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
-
       // platformVersion = await _ivsPlayerFlutterPlugin.getPlatformVersion() ??
-          'Unknown platform version';
+      'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
@@ -66,45 +68,43 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
           child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
               Expanded(
                 child: FutureBuilder(
-                  future:ivsPlayerController.initialize(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return IvsPlayerWidget(ivsPlayerController: ivsPlayerController);
-                    } else {
-                      return const CircularProgressIndicator();
-                    }
-                  }
-                ),
+                    future: ivsPlayerController.initialize(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return IvsPlayerWidget(
+                            ivsPlayerController: ivsPlayerController);
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
+                    }),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                SizedBox(
-                height: 40,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Add your onPressed code here!
-                  },
-                  child: const Text('Play'),
-                ),
-              ),
-              SizedBox(
-                height: 40,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Add your onPressed code here!
-                    ivsPlayerController.pause();
-                  },
-                  child: const Text('Pause'),
-                ),
+                  SizedBox(
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        ivsPlayerController.play();
+                      },
+                      child: const Text('Play'),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        ivsPlayerController.pause();
+                      },
+                      child: const Text('Pause'),
+                    ),
+                  )
+                ],
               )
-              ],)
             ]),
           ),
         ),

@@ -18,7 +18,6 @@ import 'package:pigeon/pigeon.dart';
     dartPackageName: 'ivs_player_plugin',
   ),
 )
-
 enum PlayerState {
   ready,
   buffering,
@@ -33,11 +32,12 @@ class CreateResponse {
   CreateResponse({required this.id});
 }
 
-
 @HostApi() // Flutter -> Native
 abstract class IvsPlayerRequesterToNative {
   CreateResponse create();
   void load(String id, String urlString);
+  void removeExcept(String id);
+  void resetAll();
   void play(String id);
   void pause(String id);
   void clean(String id);

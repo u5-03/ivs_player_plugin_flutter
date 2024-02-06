@@ -9,13 +9,13 @@ final class RequesterToFlutterImp implements IvsPlayerRequesterToFlutter {
 
   @override
   void didChangeState(String id, PlayerState state) {
-    // if (id != this.id) return;
+    if (id != this.id) return;
     callbacks.didChangeState?.call(state);
   }
 
   @override
   void didChangeDuration(String id, double duration) {
-    // if (id != this.id) return;
+    if (id != this.id) return;
     callbacks.didChangeDuration?.call(duration);
   }
 }

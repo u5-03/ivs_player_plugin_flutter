@@ -30,23 +30,34 @@ extension RequesterToNativeImpl: IvsPlayerRequesterToNative {
             requester: requester,
             ivsPlayer: ivsPlayer
         )
+
         IvsPlayerFlutterPlugin.ivsPlayers[id] = ivsPlayer
         IvsPlayerFlutterPlugin.ivsPlayerViews[id] = platformView
         return response
     }
-    
+
+    func removeExcept(id: String) throws {
+        IvsPlayerFlutterPlugin.ivsPlayers = IvsPlayerFlutterPlugin.ivsPlayers.filter({ $0.key == id })
+        IvsPlayerFlutterPlugin.ivsPlayerViews = IvsPlayerFlutterPlugin.ivsPlayerViews.filter({ $0.key == id })
+    }
+
+    func resetAll() throws {
+        IvsPlayerFlutterPlugin.ivsPlayers.removeAll()
+        IvsPlayerFlutterPlugin.ivsPlayerViews.removeAll()
+    }
+
     func load(id: String, urlString: String) throws {
         IvsPlayerFlutterPlugin.ivsPlayers[id]?.load(URL(string: urlString))
     }
-    
+
     func play(id: String) throws {
         IvsPlayerFlutterPlugin.ivsPlayers[id]?.play()
     }
-    
+
     func pause(id: String) throws {
         IvsPlayerFlutterPlugin.ivsPlayers[id]?.pause()
     }
-    
+
     func clean(id: String) throws {
         IvsPlayerFlutterPlugin.ivsPlayers[id]?.delegate = nil
         IvsPlayerFlutterPlugin.ivsPlayers.removeValue(forKey: id)

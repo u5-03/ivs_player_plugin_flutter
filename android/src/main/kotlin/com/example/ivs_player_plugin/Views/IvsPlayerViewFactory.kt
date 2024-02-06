@@ -8,7 +8,7 @@ import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
 
-class IvsPlayerViewFactory(private val requesterToNative: IvsPlayerRequesterToNativeImpl) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
+class IvsPlayerViewFactory() : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
     override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
         val params =
             args as? Map<String, Any> ?: error("`args` parameter must be `Map<String, Any>`!")

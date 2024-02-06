@@ -11,7 +11,6 @@ public class IvsPlayerFlutterPlugin: NSObject, FlutterPlugin {
     static var ivsPlayerViews: [String: IvsPlayerPlatformView] = [:]
 
     public static func register(with registrar: FlutterPluginRegistrar) {
-
         IvsPlayerRequesterToNativeSetup.setUp(binaryMessenger: registrar.messenger(), api: RequesterToNativeImpl(registrar: registrar))
         registrar.register(
             IvsPlayerViewFactory(),

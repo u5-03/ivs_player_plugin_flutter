@@ -109,6 +109,8 @@ class IvsPlayerRequesterToNativeCodec: FlutterStandardMessageCodec {
 protocol IvsPlayerRequesterToNative {
   func create() throws -> CreateResponse
   func load(id: String, urlString: String) throws
+  func removeExcept(id: String) throws
+  func resetAll() throws
   func play(id: String) throws
   func pause(id: String) throws
   func clean(id: String) throws
@@ -148,6 +150,34 @@ class IvsPlayerRequesterToNativeSetup {
       }
     } else {
       loadChannel.setMessageHandler(nil)
+    }
+    let removeExceptChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.removeExcept", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      removeExceptChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let idArg = args[0] as! String
+        do {
+          try api.removeExcept(id: idArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      removeExceptChannel.setMessageHandler(nil)
+    }
+    let resetAllChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.resetAll", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      resetAllChannel.setMessageHandler { _, reply in
+        do {
+          try api.resetAll()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      resetAllChannel.setMessageHandler(nil)
     }
     let playChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.play", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
