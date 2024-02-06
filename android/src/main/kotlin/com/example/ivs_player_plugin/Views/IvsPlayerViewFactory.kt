@@ -2,15 +2,17 @@ package com.example.ivs_player_plugin.Views
 
 import IvsPlayerRequesterToFlutter
 import android.content.Context
-import com.example.ivsPlayerPlugin.Views.ivsPlayerView.IvsPlayerWrapperView
+import com.example.ivs_player_plugin.IvsPlayerFlutterPlugin
 import com.example.ivs_player_plugin.IvsPlayerPlatoformRequester.IvsPlayerRequesterToNativeImpl
-import java.util.*
 import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
 
-class IvsPlayerViewFactory(private val requesterToFlutter: IvsPlayerRequesterToFlutter, private val requesterToNative: IvsPlayerRequesterToNativeImpl) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
+class IvsPlayerViewFactory(private val requesterToNative: IvsPlayerRequesterToNativeImpl) : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
     override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
-        return IvsPlayerWrapperView(context, requesterToFlutter, requesterToNative, null);
+        val params =
+            args as? Map<String, Any> ?: error("`args` parameter must be `Map<String, Any>`!")
+        val id = params["id"] as? String ?: error("`id` must be `String`!")
+        return IvsPlayerFlutterPlugin.ivsPlayerViews[id] ?: error("id is invalid")
     }
 }

@@ -1,24 +1,24 @@
 package com.example.ivsPlayerPlugin.Views.ivsPlayerView
 
+import CreateResponse
 import IvsPlayerRequesterToFlutter
 import IvsPlayerRequesterToNative
 import PlayerState
-import android.content.Context
 import android.net.Uri
 import android.view.View
 import com.amazonaws.ivs.player.Cue
-import com.amazonaws.ivs.player.MediaPlayer
 import com.amazonaws.ivs.player.Player
-import com.amazonaws.ivs.player.PlayerControlView
 import com.amazonaws.ivs.player.PlayerException
 import com.amazonaws.ivs.player.PlayerView
 import com.amazonaws.ivs.player.Quality
 import com.amazonaws.ivs.player.ResizeMode
-import com.example.ivs_player_plugin.IvsPlayerPlatoformRequester.IvsPlayerRequesterToNativeImpl
 import io.flutter.plugin.platform.PlatformView
 
-internal class IvsPlayerWrapperView(context: Context, private val requesterToFlutter: IvsPlayerRequesterToFlutter, private val requesterToNative: IvsPlayerRequesterToNativeImpl, creationParams: Map<String?, Any?>?): PlatformView, IvsPlayerRequesterToNative {
-    private val playerView: PlayerView;
+class IvsPlayerPlatformView(
+    private val id: String,
+    private val requesterToFlutter: IvsPlayerRequesterToFlutter,
+    private val playerView: PlayerView,
+): PlatformView, IvsPlayerRequesterToNative {
     override fun getView(): View {
         return playerView;
     }
@@ -28,14 +28,12 @@ internal class IvsPlayerWrapperView(context: Context, private val requesterToFlu
     }
 
     init {
-        playerView = PlayerView(context);
         playerView.controlsEnabled = false;
         playerView.captionsEnabled = false;
-//        playerView.resizeMode = ResizeMode.FILL;
-        requesterToNative.setPlayer(playerView.player);
+       playerView.resizeMode = ResizeMode.FILL;
         playerView.player.addListener(object : Player.Listener() {
             override fun onError(p0: PlayerException) {
-                requesterToFlutter.didChangeState(PlayerState.ERROR) {}
+                requesterToFlutter.didChangeState(id, PlayerState.ERROR) {}
             }
             override fun onRebuffering() {}
             override fun onSeekCompleted(p0: Long) {}
@@ -43,7 +41,7 @@ internal class IvsPlayerWrapperView(context: Context, private val requesterToFlu
             override fun onQualityChanged(p0: Quality) {}
             override fun onCue(p0: Cue) {}
             override fun onDurationChanged(duration: Long) {
-                requesterToFlutter.didChangeDuration(duration.toDouble()) {}
+                requesterToFlutter.didChangeDuration(id, duration.toDouble()) {}
             }
             override fun onStateChanged(state: Player.State) {
                 val playerState: PlayerState = when (state) {
@@ -54,25 +52,29 @@ internal class IvsPlayerWrapperView(context: Context, private val requesterToFlu
                     Player.State.ENDED -> PlayerState.ENDED
                     else -> PlayerState.IDLE
                 }
-                requesterToFlutter.didChangeState(playerState) {}
+                requesterToFlutter.didChangeState(id, playerState) {}
             }
         })
+        print("IvsPlayerView init(kt)");
     }
 
     // MARK: RequesterToFlutter
-    override fun load(urlString: String) {
+    override fun create(): CreateResponse {
+        TODO("Not yet implemented")
+    }
+    override fun load(id: String, urlString: String) {
         playerView.player.load(Uri.parse(urlString));
     }
 
-    override fun play() {
+    override fun play(id: String) {
         playerView.player.play();
     }
 
-    override fun pause() {
+    override fun pause(id: String) {
         playerView.player.pause();
     }
 
-    override fun clean() {
+    override fun clean(id: String) {
         playerView.player.release();
     }
 }

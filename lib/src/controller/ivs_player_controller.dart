@@ -5,40 +5,54 @@ import 'package:ivs_player_plugin/src/requester_to_flutter/requester_to_flutter_
 
 final class IvsPlayerController extends ValueNotifier<IvsPlayerState> {
   IvsPlayerController({
+    required this.uri,
     RequesterToFlutterCallbacks? callbacks,
   })  : _callbacks = callbacks,
-        super(IvsPlayerState.empty()) {
-    IvsPlayerRequesterToFlutter.setup(RequesterToFlutterImp(
-        callbacks: RequesterToFlutterCallbacks(
-      didChangeState: (state) {
-        value = value.copyWith(playerState: state);
-      },
-      didChangeDuration: (duration) {
-        value = value.copyWith(duration: duration);
-      },
-    )));
-  }
+        super(IvsPlayerState.empty()) {}
   final _requester = IvsPlayerRequesterToNative();
   final RequesterToFlutterCallbacks? _callbacks;
+  static const String kUninitializedTextureId = '';
+  String _id = kUninitializedTextureId;
+  String get id => _id;
+  final Uri uri;
+
+  Future<void> initialize() async {
+    _id = (await _requester.create()).id;
+    final requesterToFlutter = RequesterToFlutterImp(
+        id: _id,
+        callbacks: RequesterToFlutterCallbacks(
+          didChangeState: (state) {
+            _callbacks?.didChangeState?.call(state);
+            value = value.copyWith(playerState: state);
+          },
+          didChangeDuration: (duration) {
+            _callbacks?.didChangeDuration?.call(duration);
+            value = value.copyWith(duration: duration);
+          },
+        ));
+    IvsPlayerRequesterToFlutter.setup(requesterToFlutter);
+    _load(uri);
+    return Future.value(());
+  }
 
   _setVideoUri(Uri uri) {
     value = value.copyWith(videoUri: uri);
   }
 
-  load(Uri uri) {
+  _load(Uri uri) {
     _setVideoUri(uri);
-    _requester.load(uri.toString());
+    _requester.load(_id, uri.toString());
   }
 
   play() {
-    _requester.play();
+    _requester.play(_id);
   }
 
   pause() {
-    _requester.pause();
+    _requester.pause(_id);
   }
 
   clean() {
-    _requester.clean();
+    _requester.clean(_id);
   }
 }

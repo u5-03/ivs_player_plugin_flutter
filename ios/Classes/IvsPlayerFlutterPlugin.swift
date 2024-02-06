@@ -7,12 +7,14 @@ enum PlatformViewKind: String {
 }
 
 public class IvsPlayerFlutterPlugin: NSObject, FlutterPlugin {
+    static var ivsPlayers : [String: IVSPlayer] = [:]
+    static var ivsPlayerViews: [String: IvsPlayerPlatformView] = [:]
+
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let player = IVSPlayer()
-        let requester = IvsPlayerRequesterToFlutter(binaryMessenger: registrar.messenger())
-        IvsPlayerRequesterToNativeSetup.setUp(binaryMessenger: registrar.messenger(), api: RequesterToNativeImpl(player: player))
+
+        IvsPlayerRequesterToNativeSetup.setUp(binaryMessenger: registrar.messenger(), api: RequesterToNativeImpl(registrar: registrar))
         registrar.register(
-            IvsPlayerViewFactory(messenger: registrar.messenger(), player: player, requester: requester),
+            IvsPlayerViewFactory(),
             withId: PlatformViewKind.ivsPlayerView.rawValue
         )
     }

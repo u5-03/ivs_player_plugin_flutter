@@ -18,7 +18,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   final _ivsPlayerFlutterPlugin = IvsPlayerFlutter();
-  final ivsPlayerController = IvsPlayerController();
+  final ivsPlayerController = IvsPlayerController(uri: Uri.parse('https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.YtnrVcQbttF0.m3u8'));
   // final requesterToFlutter = RequesterToFlutter();
 
   @override
@@ -70,9 +70,14 @@ class _MyAppState extends State<MyApp> {
               mainAxisSize: MainAxisSize.min,
               children: [
               Expanded(
-                child: Builder(
-                  builder: (context) {
-                    return IvsPlayerWidget(ivsPlayerController: ivsPlayerController);
+                child: FutureBuilder(
+                  future:ivsPlayerController.initialize(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return IvsPlayerWidget(ivsPlayerController: ivsPlayerController);
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
                   }
                 ),
               ),
@@ -85,7 +90,6 @@ class _MyAppState extends State<MyApp> {
                 child: ElevatedButton(
                   onPressed: () {
                     // Add your onPressed code here!
-                    ivsPlayerController.load(Uri.parse('https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.YtnrVcQbttF0.m3u8'));
                   },
                   child: const Text('Play'),
                 ),

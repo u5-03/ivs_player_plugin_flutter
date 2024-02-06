@@ -59,30 +59,90 @@ enum class PlayerState(val raw: Int) {
     }
   }
 }
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class CreateResponse (
+  val id: String
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): CreateResponse {
+      val id = list[0] as String
+      return CreateResponse(id)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      id,
+    )
+  }
+}
+@Suppress("UNCHECKED_CAST")
+private object IvsPlayerRequesterToNativeCodec : StandardMessageCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      128.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          CreateResponse.fromList(it)
+        }
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+    when (value) {
+      is CreateResponse -> {
+        stream.write(128)
+        writeValue(stream, value.toList())
+      }
+      else -> super.writeValue(stream, value)
+    }
+  }
+}
+
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface IvsPlayerRequesterToNative {
-  fun load(urlString: String)
-  fun play()
-  fun pause()
-  fun clean()
+  fun create(): CreateResponse
+  fun load(id: String, urlString: String)
+  fun play(id: String)
+  fun pause(id: String)
+  fun clean(id: String)
 
   companion object {
     /** The codec used by IvsPlayerRequesterToNative. */
     val codec: MessageCodec<Any?> by lazy {
-      StandardMessageCodec()
+      IvsPlayerRequesterToNativeCodec
     }
     /** Sets up an instance of `IvsPlayerRequesterToNative` to handle messages through the `binaryMessenger`. */
     @Suppress("UNCHECKED_CAST")
     fun setUp(binaryMessenger: BinaryMessenger, api: IvsPlayerRequesterToNative?) {
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.create", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.create())
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.load", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val urlStringArg = args[0] as String
+            val idArg = args[0] as String
+            val urlStringArg = args[1] as String
             var wrapped: List<Any?>
             try {
-              api.load(urlStringArg)
+              api.load(idArg, urlStringArg)
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
@@ -96,10 +156,12 @@ interface IvsPlayerRequesterToNative {
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.play", codec)
         if (api != null) {
-          channel.setMessageHandler { _, reply ->
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val idArg = args[0] as String
             var wrapped: List<Any?>
             try {
-              api.play()
+              api.play(idArg)
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
@@ -113,10 +175,12 @@ interface IvsPlayerRequesterToNative {
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.pause", codec)
         if (api != null) {
-          channel.setMessageHandler { _, reply ->
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val idArg = args[0] as String
             var wrapped: List<Any?>
             try {
-              api.pause()
+              api.pause(idArg)
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
@@ -130,10 +194,12 @@ interface IvsPlayerRequesterToNative {
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.clean", codec)
         if (api != null) {
-          channel.setMessageHandler { _, reply ->
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val idArg = args[0] as String
             var wrapped: List<Any?>
             try {
-              api.clean()
+              api.clean(idArg)
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
@@ -156,11 +222,11 @@ class IvsPlayerRequesterToFlutter(private val binaryMessenger: BinaryMessenger) 
       StandardMessageCodec()
     }
   }
-  fun didChangeState(stateArg: PlayerState, callback: (Result<Unit>) -> Unit)
+  fun didChangeState(idArg: String, stateArg: PlayerState, callback: (Result<Unit>) -> Unit)
 {
     val channelName = "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToFlutter.didChangeState"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(stateArg.raw)) {
+    channel.send(listOf(idArg, stateArg.raw)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(IvsPlayerFlutterError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -172,11 +238,11 @@ class IvsPlayerRequesterToFlutter(private val binaryMessenger: BinaryMessenger) 
       } 
     }
   }
-  fun didChangeDuration(durationArg: Double, callback: (Result<Unit>) -> Unit)
+  fun didChangeDuration(idArg: String, durationArg: Double, callback: (Result<Unit>) -> Unit)
 {
     val channelName = "dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToFlutter.didChangeDuration"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(durationArg)) {
+    channel.send(listOf(idArg, durationArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(IvsPlayerFlutterError(it[0] as String, it[1] as String, it[2] as String?)))

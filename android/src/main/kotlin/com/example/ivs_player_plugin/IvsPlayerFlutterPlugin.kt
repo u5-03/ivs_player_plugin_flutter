@@ -1,7 +1,10 @@
 package com.example.ivs_player_plugin
 
 import IvsPlayerRequesterToFlutter
+import android.content.Context
 import androidx.annotation.NonNull
+import com.amazonaws.ivs.player.Player
+import com.example.ivsPlayerPlugin.Views.ivsPlayerView.IvsPlayerPlatformView
 import com.example.ivs_player_plugin.IvsPlayerPlatoformRequester.IvsPlayerRequesterToNativeImpl
 import com.example.ivs_player_plugin.Views.IvsPlayerViewFactory
 
@@ -23,13 +26,17 @@ class IvsPlayerFlutterPlugin: FlutterPlugin {
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
+  companion object {
+    var ivsPlayers: MutableMap<String, Player> = mutableMapOf();
+    var ivsPlayerViews: MutableMap<String, IvsPlayerPlatformView> = mutableMapOf();
+  }
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    val requesterToNative = IvsPlayerRequesterToNativeImpl();
-    val requesterToFlutter = IvsPlayerRequesterToFlutter(flutterPluginBinding.binaryMessenger)
+    val context: Context = flutterPluginBinding.applicationContext
+    val requesterToNative = IvsPlayerRequesterToNativeImpl(context, flutterPluginBinding.binaryMessenger);
     IvsPlayerRequesterToNative.setUp(flutterPluginBinding.binaryMessenger, requesterToNative);
     flutterPluginBinding.platformViewRegistry
-      .registerViewFactory(PlatformViewKind.IVS_PLAYER.rawValue, IvsPlayerViewFactory(requesterToFlutter, requesterToNative));
+      .registerViewFactory(PlatformViewKind.IVS_PLAYER.rawValue, IvsPlayerViewFactory(requesterToNative));
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {

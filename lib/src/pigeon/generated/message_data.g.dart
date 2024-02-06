@@ -34,6 +34,50 @@ enum PlayerState {
   error,
 }
 
+class CreateResponse {
+  CreateResponse({
+    required this.id,
+  });
+
+  String id;
+
+  Object encode() {
+    return <Object?>[
+      id,
+    ];
+  }
+
+  static CreateResponse decode(Object result) {
+    result as List<Object?>;
+    return CreateResponse(
+      id: result[0]! as String,
+    );
+  }
+}
+
+class _IvsPlayerRequesterToNativeCodec extends StandardMessageCodec {
+  const _IvsPlayerRequesterToNativeCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is CreateResponse) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128: 
+        return CreateResponse.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
 class IvsPlayerRequesterToNative {
   /// Constructor for [IvsPlayerRequesterToNative].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -42,9 +86,36 @@ class IvsPlayerRequesterToNative {
       : __pigeon_binaryMessenger = binaryMessenger;
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec = StandardMessageCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _IvsPlayerRequesterToNativeCodec();
 
-  Future<void> load(String urlString) async {
+  Future<CreateResponse> create() async {
+    const String __pigeon_channelName = 'dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.create';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as CreateResponse?)!;
+    }
+  }
+
+  Future<void> load(String id, String urlString) async {
     const String __pigeon_channelName = 'dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.load';
     final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -52,7 +123,7 @@ class IvsPlayerRequesterToNative {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[urlString]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[id, urlString]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -66,7 +137,7 @@ class IvsPlayerRequesterToNative {
     }
   }
 
-  Future<void> play() async {
+  Future<void> play(String id) async {
     const String __pigeon_channelName = 'dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.play';
     final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -74,7 +145,7 @@ class IvsPlayerRequesterToNative {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(null) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[id]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -88,7 +159,7 @@ class IvsPlayerRequesterToNative {
     }
   }
 
-  Future<void> pause() async {
+  Future<void> pause(String id) async {
     const String __pigeon_channelName = 'dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.pause';
     final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -96,7 +167,7 @@ class IvsPlayerRequesterToNative {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(null) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[id]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -110,7 +181,7 @@ class IvsPlayerRequesterToNative {
     }
   }
 
-  Future<void> clean() async {
+  Future<void> clean(String id) async {
     const String __pigeon_channelName = 'dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToNative.clean';
     final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -118,7 +189,7 @@ class IvsPlayerRequesterToNative {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(null) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[id]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -136,9 +207,9 @@ class IvsPlayerRequesterToNative {
 abstract class IvsPlayerRequesterToFlutter {
   static const MessageCodec<Object?> pigeonChannelCodec = StandardMessageCodec();
 
-  void didChangeState(PlayerState state);
+  void didChangeState(String id, PlayerState state);
 
-  void didChangeDuration(double duration);
+  void didChangeDuration(String id, double duration);
 
   static void setup(IvsPlayerRequesterToFlutter? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -152,11 +223,14 @@ abstract class IvsPlayerRequesterToFlutter {
           assert(message != null,
           'Argument for dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToFlutter.didChangeState was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final PlayerState? arg_state = args[0] == null ? null : PlayerState.values[args[0]! as int];
+          final String? arg_id = (args[0] as String?);
+          assert(arg_id != null,
+              'Argument for dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToFlutter.didChangeState was null, expected non-null String.');
+          final PlayerState? arg_state = args[1] == null ? null : PlayerState.values[args[1]! as int];
           assert(arg_state != null,
               'Argument for dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToFlutter.didChangeState was null, expected non-null PlayerState.');
           try {
-            api.didChangeState(arg_state!);
+            api.didChangeState(arg_id!, arg_state!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -177,11 +251,14 @@ abstract class IvsPlayerRequesterToFlutter {
           assert(message != null,
           'Argument for dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToFlutter.didChangeDuration was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final double? arg_duration = (args[0] as double?);
+          final String? arg_id = (args[0] as String?);
+          assert(arg_id != null,
+              'Argument for dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToFlutter.didChangeDuration was null, expected non-null String.');
+          final double? arg_duration = (args[1] as double?);
           assert(arg_duration != null,
               'Argument for dev.flutter.pigeon.ivs_player_plugin.IvsPlayerRequesterToFlutter.didChangeDuration was null, expected non-null double.');
           try {
-            api.didChangeDuration(arg_duration!);
+            api.didChangeDuration(arg_id!, arg_duration!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
