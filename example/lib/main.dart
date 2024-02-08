@@ -19,7 +19,7 @@ class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
   final ivsPlayerController = IvsPlayerController(
       uri: Uri.parse(
-          'https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.YtnrVcQbttF0.m3u8'));
+          'https://fcc3ddae59ed.us-west-2.playback.live-video.net/api/video/v1/us-west-2.893648527354.channel.XFAcAcypUxQm.m3u8'));
   // final requesterToFlutter = RequesterToFlutter();
 
   @override

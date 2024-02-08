@@ -13,9 +13,11 @@ import AmazonIVSPlayer
 
 final class RequesterToNativeImpl: NSObject {
     private let registrar: FlutterPluginRegistrar
+    private let requester: IvsPlayerRequesterToFlutter
 
     init(registrar: FlutterPluginRegistrar) {
         self.registrar = registrar
+        requester = IvsPlayerRequesterToFlutter(binaryMessenger: registrar.messenger())
     }
 }
 
@@ -23,16 +25,14 @@ extension RequesterToNativeImpl: IvsPlayerRequesterToNative {
     func create() throws -> CreateResponse {
         let id = UUID().uuidString
         let ivsPlayer = IVSPlayer()
-        let response = CreateResponse(id: id)
-        let requester = IvsPlayerRequesterToFlutter(binaryMessenger: registrar.messenger())
-        let platformView = IvsPlayerPlatformView(
-            id: id,
-            requester: requester,
-            ivsPlayer: ivsPlayer
-        )
 
+        let delegate = IvsPlayerDelegate(id: id, requester: requester)
+        ivsPlayer.delegate = delegate
+        let response = CreateResponse(id: id)
+
+        IvsPlayerFlutterPlugin.ivsPlayerDelegates[id] = delegate
         IvsPlayerFlutterPlugin.ivsPlayers[id] = ivsPlayer
-        IvsPlayerFlutterPlugin.ivsPlayerViews[id] = platformView
+
         return response
     }
 
@@ -60,6 +60,7 @@ extension RequesterToNativeImpl: IvsPlayerRequesterToNative {
 
     func clean(id: String) throws {
         IvsPlayerFlutterPlugin.ivsPlayers[id]?.delegate = nil
+        IvsPlayerFlutterPlugin.ivsPlayerDelegates.removeValue(forKey: id)
         IvsPlayerFlutterPlugin.ivsPlayers.removeValue(forKey: id)
         IvsPlayerFlutterPlugin.ivsPlayerViews.removeValue(forKey: id)
     }

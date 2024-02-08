@@ -15,7 +15,7 @@ A new Flutter plugin project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'AmazonIVSPlayer', '= 1.24.0'
+  s.dependency 'AmazonIVSPlayer', '= 1.8.3'
   s.platform = :ios, '11.0'
 
   # Flutter.framework does not contain a i386 slice.

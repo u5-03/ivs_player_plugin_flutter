@@ -35,6 +35,11 @@ final class IvsPlayerController extends ValueNotifier<IvsPlayerState> {
     return Future.value(());
   }
 
+  dispose() {
+    _requester.clean(_id);
+    super.dispose();
+  }
+
   _setVideoUri(Uri uri) {
     value = value.copyWith(videoUri: uri);
   }

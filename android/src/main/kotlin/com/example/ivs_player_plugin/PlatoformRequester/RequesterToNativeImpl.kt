@@ -4,20 +4,25 @@ import CreateResponse
 import IvsPlayerRequesterToFlutter
 import IvsPlayerRequesterToNative
 import android.content.Context
+import android.graphics.Color
 import android.net.Uri
+import android.view.View
 import com.amazonaws.ivs.player.PlayerView
 import com.example.ivsPlayerPlugin.Views.ivsPlayerView.IvsPlayerPlatformView
 import com.example.ivs_player_plugin.IvsPlayerFlutterPlugin
-import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.embedding.engine.plugins.FlutterPlugin
 import java.util.UUID
 
-class IvsPlayerRequesterToNativeImpl(private val context: Context, private val binaryMessenger: BinaryMessenger): IvsPlayerRequesterToNative {
+class IvsPlayerRequesterToNativeImpl(private val flutterPluginBinding: FlutterPlugin.FlutterPluginBinding): IvsPlayerRequesterToNative {
     override fun create(): CreateResponse {
         val id = UUID.randomUUID().toString()
         val response = CreateResponse(id = id)
-        val requester = IvsPlayerRequesterToFlutter(binaryMessenger);
+        val requester = IvsPlayerRequesterToFlutter(flutterPluginBinding.binaryMessenger);
+        val context: Context = flutterPluginBinding.applicationContext;
         val playerView = PlayerView(context);
-        val platformView = IvsPlayerPlatformView(id, requester, playerView);
+        val view = View(context);
+        view.setBackgroundColor(Color.BLUE);
+        val platformView = IvsPlayerPlatformView(id, requester, playerView, view);
         IvsPlayerFlutterPlugin.ivsPlayers[id] = playerView.player
         IvsPlayerFlutterPlugin.ivsPlayerViews[id] = platformView
         return response

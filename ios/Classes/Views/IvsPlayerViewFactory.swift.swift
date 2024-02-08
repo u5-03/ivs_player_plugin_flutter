@@ -23,8 +23,14 @@ final class IvsPlayerViewFactory: NSObject, FlutterPlatformViewFactory {
 
         if let platformView = IvsPlayerFlutterPlugin.ivsPlayerViews[id] {
             return platformView
+        } else if let ivsPlayer = IvsPlayerFlutterPlugin.ivsPlayers[id] {
+            let platformView = IvsPlayerPlatformView(
+                ivsPlayer: ivsPlayer
+            )
+            IvsPlayerFlutterPlugin.ivsPlayerViews[id] = platformView
+            return platformView
         } else {
-            fatalError("id is invalid") 
+            fatalError("Player is not invalid \(id)")
         }
     }
 

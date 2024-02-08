@@ -19,6 +19,7 @@ class IvsPlayerPlatformView(
     private val id: String,
     private val requesterToFlutter: IvsPlayerRequesterToFlutter,
     private val playerView: PlayerView,
+    private var view: View
 ): PlatformView {
     override fun getView(): View {
         return playerView;

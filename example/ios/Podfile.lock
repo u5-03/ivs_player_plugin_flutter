@@ -1,10 +1,10 @@
 PODS:
-  - AmazonIVSPlayer (1.24.0)
+  - AmazonIVSPlayer (1.8.3)
   - Flutter (1.0.0)
   - integration_test (0.0.1):
     - Flutter
   - ivs_player_plugin (0.0.1):
-    - AmazonIVSPlayer (= 1.24.0)
+    - AmazonIVSPlayer (= 1.8.3)
     - Flutter
 
 DEPENDENCIES:
@@ -25,10 +25,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/ivs_player_plugin/ios"
 
 SPEC CHECKSUMS:
-  AmazonIVSPlayer: 83d7d16a27eb5f804aa88e6a8fb0a77e0e08ef9d
+  AmazonIVSPlayer: ce792b427a4fe466d6ea32b3ce8abe391d9242d0
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   integration_test: 13825b8a9334a850581300559b8839134b124670
-  ivs_player_plugin: 863952270a8b4c2676036dc4805b0fe612d9ed5d
+  ivs_player_plugin: d00c3763a5fab8cb99e2676f2cff25bbeba118fd
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
 
